@@ -47,7 +47,7 @@ prompt() {
 }
 
 # Prompt user for MySQL root password
-MYSQL_ROOT_PASSWORD=$(prompt "Enter MySQL root password" "root")
+MYSQL_ROOT_PASSWORD=$(prompt "Enter MariaDB root password" "root")
 
 # Step 1: Update the Debian OS
 msg_info "Updating Container OS - Updating package list and upgrading existing packages"
@@ -87,20 +87,20 @@ EOF
 systemctl reload apache2
 msg_ok "Configured Apache to serve content from /var/www/html"
 
-# Step 4: Install MySQL server
-msg_info "Installing MySQL server"
-apt-get install -y mysql-server
-msg_ok "Installed MySQL server"
+# Step 4: Install MariaDB server
+msg_info "Installing MariaDB server as a drop-in replacement for MySQL"
+apt-get install -y mariadb-server
+msg_ok "Installed MariaDB server"
 
-# Step 5: Secure MySQL installation
-msg_info "Securing MySQL server"
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_ROOT_PASSWORD';"
+# Step 5: Secure MariaDB installation
+msg_info "Securing MariaDB server"
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';"
 mysql -e "DELETE FROM mysql.user WHERE User='';"
 mysql -e "DROP DATABASE IF EXISTS test;"
 mysql -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
 mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
 mysql -e "FLUSH PRIVILEGES;"
-msg_ok "Secured MySQL server"
+msg_ok "Secured MariaDB server"
 
 # Step 6: Add PHP repository and install PHP 8.x
 msg_info "Adding PHP repository for the latest PHP versions"
