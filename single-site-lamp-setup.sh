@@ -46,7 +46,7 @@ prompt() {
   echo "${user_input:-$default_value}"
 }
 
-# Prompt user for MySQL root password
+# Prompt user for MariaDB root password
 MYSQL_ROOT_PASSWORD=$(prompt "Enter MariaDB root password" "root")
 
 # Step 1: Update the Debian OS
@@ -94,12 +94,15 @@ msg_ok "Installed MariaDB server"
 
 # Step 5: Secure MariaDB installation
 msg_info "Securing MariaDB server"
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';"
-mysql -e "DELETE FROM mysql.user WHERE User='';"
-mysql -e "DROP DATABASE IF EXISTS test;"
-mysql -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
-mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
-mysql -e "FLUSH PRIVILEGES;"
+# Switch to the MariaDB root user without a password to configure the root user authentication method.
+sudo mysql <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('$MYSQL_ROOT_PASSWORD');
+DELETE FROM mysql.user WHERE User='';
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+FLUSH PRIVILEGES;
+EOF
 msg_ok "Secured MariaDB server"
 
 # Step 6: Add PHP repository and install PHP 8.x
