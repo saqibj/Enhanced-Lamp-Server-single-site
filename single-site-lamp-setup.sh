@@ -46,9 +46,6 @@ prompt() {
   echo "${user_input:-$default_value}"
 }
 
-# Prompt user for MariaDB root password
-MYSQL_ROOT_PASSWORD=$(prompt "Enter MariaDB root password" "root")
-
 # Step 1: Update the Debian OS
 msg_info "Updating Container OS - Updating package list and upgrading existing packages"
 sed -i "/bullseye-updates/d" /etc/apt/sources.list
@@ -94,6 +91,9 @@ msg_ok "Installed MariaDB server"
 
 # Step 5: Secure MariaDB installation
 msg_info "Securing MariaDB server"
+# Prompt user for MariaDB root password during the securing process
+MYSQL_ROOT_PASSWORD=$(prompt "Enter MariaDB root password" "root")
+
 # Switch to the MariaDB root user without a password to configure the root user authentication method.
 sudo mysql <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('$MYSQL_ROOT_PASSWORD');
