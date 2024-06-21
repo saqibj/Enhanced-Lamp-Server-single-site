@@ -54,7 +54,7 @@ msg_info "Updating Container OS"
 sed -i "/bullseye-updates/d" /etc/apt/sources.list
 echo "deb http://deb.debian.org/debian bullseye main contrib non-free" > /etc/apt/sources.list.d/debian-repo.list
 apt-get update
-apt-get -y upgrade
+apt-get -y upgrade &>/dev/null
 msg_ok "Updated Container OS"
 
 # Step 2: Install basic dependencies
