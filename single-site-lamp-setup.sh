@@ -105,12 +105,8 @@ FLUSH PRIVILEGES;
 EOF
 msg_ok "Secured MariaDB server"
 
-# Step 6: Add PHP repository and install PHP 8.x
-msg_info "Adding PHP repository for the latest PHP versions"
-add-apt-repository ppa:ondrej/php -y
-msg_ok "Added PHP repository"
-
-msg_info "Installing PHP 8.x and required modules"
+# Step 6: Install PHP 8.x and required modules
+msg_info "Installing PHP 8.x and required modules directly from Debian repositories"
 apt-get update
 apt-get install -y php8.2 libapache2-mod-php php8.2-mysql
 msg_ok "Installed PHP 8.x"
